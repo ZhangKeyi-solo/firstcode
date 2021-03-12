@@ -1,0 +1,117 @@
+using System;
+
+namespace ControlCalculator
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            double a, b;
+            string s1;
+            char c;
+            
+            Console.WriteLine("请输入第一个数字：");
+            s1=Console.ReadLine();
+            a = Double.Parse(s1);
+            Console.WriteLine("请输入运算符：");
+            s1 = Console.ReadLine();
+            char[] cc = s1.ToCharArray();
+            c = cc[0];
+            Console.WriteLine("请输入第二个数字：");
+            s1 = Console.ReadLine();
+            b = Double.Parse(s1);
+            switch (c)
+            {
+                case '+':
+                    Console.WriteLine("计算结果是：{0}",a + b);
+                    break;
+                case '-':
+                    Console.WriteLine("计算结果是：{0}", a - b);
+                    break;
+                case '*':
+                    Console.WriteLine("计算结果是：{0}", a * b);
+                    break;
+                case '/':
+                    Console.WriteLine("计算结果是：{0}", a / b);
+                    break;
+                default:
+                    Console.WriteLine("输入有误。");
+                    break;
+            }
+           
+
+
+        }
+    }
+}
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsFormsCalculator
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void textBox1_ReadOnlyChanged(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void button1_MouseClick(object sender, MouseEventArgs e)
+        {
+            char c;
+            double a,b,result;
+            string s;
+            s = textBox1.Text;
+            a = Double.Parse(s);
+            s = textBox3.Text;
+            b = Double.Parse(s);
+            s = textBox2.Text;
+            char[] cc = s.ToCharArray();
+            c = cc[0];
+            switch (c)
+            {
+                case '+':
+                    result = a + b;
+                    textBox4.Text = ""+result;
+                    break;
+                case '-':
+                    result = a - b;
+                    textBox4.Text = "" + result;
+                    break;
+                case '*':
+                    result = a * b;
+                    textBox4.Text = "" + result;
+                    break;
+                case '/':
+                    result = a / b;
+                    textBox4.Text = "" + result;
+                    break;
+                default:
+                    textBox4.Text = "输入有误";
+                    break;
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
