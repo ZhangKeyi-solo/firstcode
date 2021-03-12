@@ -3,6 +3,7 @@ using System;
 namespace ControlCalculator
 {
     class Program
+    
     {
         static void Main(string[] args)
         {
@@ -10,32 +11,32 @@ namespace ControlCalculator
             string s1;
             char c;
             
-            Console.WriteLine("请输入第一个数字：");
+            Console.WriteLine("输入第一个数字：");
             s1=Console.ReadLine();
             a = Double.Parse(s1);
-            Console.WriteLine("请输入运算符：");
+            Console.WriteLine("输入运算符：");
             s1 = Console.ReadLine();
             char[] cc = s1.ToCharArray();
             c = cc[0];
-            Console.WriteLine("请输入第二个数字：");
+            Console.WriteLine("输入第二个数字：");
             s1 = Console.ReadLine();
             b = Double.Parse(s1);
             switch (c)
             {
                 case '+':
-                    Console.WriteLine("计算结果是：{0}",a + b);
+                    Console.WriteLine("计算结果为：{0}",a + b);
                     break;
                 case '-':
-                    Console.WriteLine("计算结果是：{0}", a - b);
+                    Console.WriteLine("计算结果为：{0}", a - b);
                     break;
                 case '*':
-                    Console.WriteLine("计算结果是：{0}", a * b);
+                    Console.WriteLine("计算结果为：{0}", a * b);
                     break;
                 case '/':
-                    Console.WriteLine("计算结果是：{0}", a / b);
+                    Console.WriteLine("计算结果为：{0}", a / b);
                     break;
                 default:
-                    Console.WriteLine("输入有误。");
+                    Console.WriteLine("输入错误。");
                     break;
             }
            
@@ -104,7 +105,7 @@ namespace WindowsFormsCalculator
                     textBox4.Text = "" + result;
                     break;
                 default:
-                    textBox4.Text = "输入有误";
+                    textBox4.Text = "输入错误";
                     break;
             }
         }
