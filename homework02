@@ -1,0 +1,37 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace test02
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int number = int.Parse(Console.ReadLine());//输入一个数
+            bool isTrue = true;
+            for (int i = 2; i < number; i++)
+            {
+                if (number % i == 0)
+                {
+                    isTrue = false; //一旦发现该数能够被2到本身-1的数整除,说明该数不是质数,.
+                    break; //break在循环中,用于结束当前循环. 循环结束.
+                }
+            }
+            //根据状态位判断该数是否是质数.
+            if (isTrue == true)
+            {
+                Console.WriteLine(number + "是质数");
+            }
+            else
+            {
+                Console.WriteLine(number + "不是质数");
+            }
+            Console.ReadKey();
+
+
+        }
+    }
+}
