@@ -35,3 +35,131 @@ namespace test02
         }
     }
 }
+
+
+
+using System;
+
+namespace ZhengShuShuZu
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int n = 0;//此处表明数字的数量
+            int sum = 0;//求出所有数的和
+            int max,min;
+            double average;
+            Console.WriteLine("请输入一组数字");
+            string[] numbers = Console.ReadLine().Split(' ');
+            max = min = int.Parse(numbers[0]);
+            foreach(string a in numbers)
+            {
+                int number = int.Parse(a);
+                if (max < number)
+                    max = number;
+                if (min > number)
+                    min = number;
+                sum += number;
+                n++;
+            }
+            average = (double)sum / n;
+            Console.Write("最大值为" + max + ",");
+            Console.Write("最小值为" + min + ",");
+            Console.Write("平均值为" + average + ",");
+            Console.Write("和为" + sum + ",");
+        }
+    }
+}
+
+
+
+
+using System;
+
+namespace SieveOfEratosthenes
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int[] numbers= new int[100];
+            for (int i = 0; i < 100; i++)
+                numbers[i] = i + 1;
+            for(int i = 2; i <= 100 / 2; i++)
+            {
+                int n = i*2;
+                while (n <= 100)
+                {
+
+                    numbers[n-1] = 0;
+                    n = n + i;
+                }
+            }
+            Console.WriteLine("100以内的素数有：");
+            foreach(int number in numbers)
+            {
+                if (number != 1 && number != 0)
+                    Console.Write(number + " ");
+            }
+        }
+    }
+}
+
+
+
+using System;
+
+namespace W
+{
+    class Demo
+    {
+        public static string getShape(int n)
+        {
+            switch (n)
+            {
+                case 0:return "正方形";
+                case 1:return "矩形";
+                default:return "三角形";
+            }
+        }
+        static void Main(string[] args)
+        {
+            double sum = 0;
+            string shape = " ";
+            Random rd = new Random();
+            for(int i=0;i<10; i++)
+            {
+                shape = getShape(rd.Next(0, 3));
+                if (shape == "正方形")
+                {
+                    Square sq = ShapeFactory.GetShapeInterface(shape) as Square;
+                    if (sq != null)
+                    {
+                        Console.WriteLine("正方形：" + ((ShapeInterface)sq).area());
+                        sum += ((ShapeInterface)sq).area();
+                    }
+                }
+                else if (shape == "矩形")
+                {
+                    Rectangle rec = ShapeFactory.GetShapeInterface(shape) as Rectangle;
+                    if (rec != null)
+                    {
+                        Console.WriteLine("矩形：" + ((ShapeInterface)rec).area());
+                        sum += ((ShapeInterface)rec).area();
+                    }
+                }
+                else
+                {
+                    Triangle tri = ShapeFactory.GetShapeInterface(shape) as Triangle;
+                    if (tri != null)
+                    {
+                        Console.WriteLine("三角形：" + ((ShapeInterface)tri).area());
+                        sum += ((ShapeInterface)tri).area();
+                    }
+                }
+            }
+            Console.WriteLine("总面积为：" + sum);
+        }
+    }
+}
