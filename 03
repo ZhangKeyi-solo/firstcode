@@ -1,0 +1,158 @@
+using System;
+using System.Collections.Generic;
+
+namespace HW03_c1
+{
+    public class Node<T>
+    {
+        public Node<T> Next { get; set; }
+        public T Data { get; set; }
+
+        public Node(T t)
+        {
+            Next = null;
+            Data = t;
+        }
+    }
+
+    public class GenericList<T>
+    {
+        private Node<T> head;
+        private Node<T> tail;
+
+        public GenericList()
+        {
+            tail = head = null;
+        }
+
+        public Node<T> Head
+        {
+            get => head;
+        }
+
+        public void Add(T t)
+        {
+            Node<T> n = new Node<T>(t);
+            if (tail == null)
+            {
+                head = tail = n;
+            }
+            else
+            {
+                tail.Next = n;
+                tail = n;
+            }
+        }
+
+        public void ForEach(Action<T> action)//ForEeach遍历
+        {
+            for (Node<T> node = this.Head; node != null; node = node.Next)
+                action(node.Data);
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int sum = 0;
+            GenericList<int> intlist = new GenericList<int>();
+            for (int x = 0; x < 10; x++)
+                intlist.Add(x);
+            int Max= intlist.Head.Data;
+            int Min = Max;
+            intlist.ForEach(new Action<int>(a => {
+                Console.Write(a+" ");//打印
+                if (Min > a)//求最小值
+                    Min = a;
+                if (Max < a)//求最大值
+                    Max = a;
+                sum += a;//求和
+            }));
+            Console.WriteLine("");
+            Console.WriteLine("最大指为" + Max + "," + "最小值为" + Min + "和为" + sum);
+            
+           
+        }
+    }
+}
+
+
+
+
+
+
+
+using System;
+using System.Threading;
+
+namespace HW03_c2
+{
+    public class AlarmClock
+    {
+        private string time1,time2;//time1和time2为现在的时间
+        public string alarmtime;//设置的闹铃时间
+        public AlarmClock(string alarmtime)
+        {
+            this.alarmtime = alarmtime;
+        }
+        //定义事件
+        public delegate void TickEventHandler(string time,string Alarmtime);
+        public event TickEventHandler TickEvent;
+        public delegate void AlarmEventHandler();
+        public event AlarmEventHandler AlarmEvent;
+
+        public bool compareTime(string st1,string st2)//比较现在的事件str1是否大于等于设置的事件st2，如果是则返回true
+        {
+            DateTime dt1 = Convert.ToDateTime(st1);
+            DateTime dt2 = Convert.ToDateTime(st2);
+            if (DateTime.Compare(dt1, dt2) >= 0)
+                return true;
+            else
+                return false;
+        }
+        public void TimeRun()
+        { 
+            while (true)
+            {
+                
+                Console.Clear();
+                time1 =DateTime.Now.ToLocalTime().ToString();
+                time2 = time1.Split(" ")[1];
+                if (TickEvent != null)
+                {
+                    TickEvent(time1,alarmtime);//触发显示时间的事件
+                }
+                if (AlarmEvent != null && compareTime(time2,alarmtime))//当时间大于等于设置时间时触发提示事件
+                {
+                    AlarmEvent();
+                }
+                Thread.Sleep(500);//每隔500ms循环一次
+            }
+        }
+    }
+    class Program
+    {
+        //测试用事件
+        static void ShowTime(string str,string alarmtime)
+        {
+            Console.WriteLine("当前时间为："+str);
+            Console.WriteLine("您设置的时间为" + alarmtime);
+        }
+        static void ShowAlarm()
+        {
+            Console.WriteLine("闹钟已响。");
+        }
+        //调用
+        static void Main(string[] args)
+        {
+            string alarmtime;
+            Console.WriteLine("请输入您设置的闹钟,如21:54:10(请用英文冒号)：");
+            alarmtime=Console.ReadLine();
+            AlarmClock alarmclock = new AlarmClock(alarmtime);
+            alarmclock.TickEvent += ShowTime;
+            alarmclock.AlarmEvent += ShowAlarm;
+            alarmclock.TimeRun();
+        }
+    }
+}
