@@ -1,0 +1,370 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace HW04
+{
+    class Order
+    {
+        public string OrderNumber;//订单号
+        private string ProductName;//商品名称
+        private string Client;//客户
+        private double OrderAmount;//订单金额
+        private OrderDetails orderDetails;
+
+        public void setOrderNumber(string odernumber)
+        {
+            OrderNumber = odernumber;
+        }
+        public string getOrderNumber()
+        {
+            return OrderNumber;
+        }
+        public void setProductName(string productname)
+        {
+            ProductName=productname;
+        }
+        public string getProductName()
+        {
+            return ProductName;
+        }
+        public void setClient(string client)
+        {
+            Client = client;
+        }
+        public string getClient()
+        {
+            return Client;
+        }
+        public void setOrderAmount(double orderamount)
+        {
+            OrderAmount = orderamount;
+        }
+        public double getOrderAmount()
+        {
+            return OrderAmount;
+        }
+        public Order(string orderNumber, string productName, string client, double orderAmount)
+        {
+            OrderNumber = orderNumber;
+            ProductName = productName;
+            Client = client;
+            OrderAmount = orderAmount;
+            orderDetails = new OrderDetails(orderNumber,productName,client,orderAmount);
+        }
+        public OrderDetails GetOrderDetails()
+        {
+            return orderDetails;
+        }
+        public override bool Equals(object obj)
+        {
+            return obj is Order order &&
+                   OrderNumber == order.OrderNumber &&
+                   ProductName == order.ProductName &&
+                   Client == order.Client &&
+                   OrderAmount == order.OrderAmount||
+                   obj is Order order1&&
+                   order1.OrderNumber==OrderNumber;
+        }
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(OrderNumber);
+        }
+        public override string ToString()
+        {
+            return "订单号："+this.OrderNumber+"\r\n"+
+                "商品名称："+this.ProductName+"\r\n"+
+                "客户："+this.Client+"\r\n"
+                +"订单金额："+this.OrderAmount;
+        }
+
+    }
+}
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace HW04
+{
+    class OrderDetails
+    {
+        public string OrederBuiltTime { get; set; }
+        public string OrderNumber { get; set; }//订单号
+        public string ProductName { get; set; }//商品名称
+        public string Client { get; set; }//客户
+        public double OrderAmount { get; set; }//订单金额
+
+        public OrderDetails(string orderNumber, string productName, string client, double orderAmount)
+        {
+            OrderNumber = orderNumber;
+            ProductName = productName;
+            Client = client;
+            OrderAmount = orderAmount;
+            OrederBuiltTime = DateTime.Now.ToString();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is OrderDetails details &&
+                   OrederBuiltTime == details.OrederBuiltTime &&
+                   OrderNumber == details.OrderNumber &&
+                   ProductName == details.ProductName &&
+                   Client == details.Client &&
+                   OrderAmount == details.OrderAmount||
+                   obj is OrderDetails details1&&
+                   details1.OrederBuiltTime==OrederBuiltTime&&
+                   details1.OrderNumber==OrderNumber;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(OrederBuiltTime, OrderNumber);
+        }
+
+        public override string ToString()
+        {
+            return "订单号：" + this.OrderNumber + "\r\n" +
+                "商品名称：" + this.ProductName + "\r\n" +
+                "客户：" + this.Client + "\r\n"+
+                "订单金额：" + this.OrderAmount+"\r\n"+
+                "订单创建时间："+OrederBuiltTime;
+        }
+    }
+}
+
+
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace HW04
+{
+    class OrderService
+    {
+        List<Order> orders = new List<Order>();
+        public void AddOrder(Order order) {
+            bool equals = false;
+            foreach(Order or in orders)
+            {
+                equals = or.Equals(order);
+            }
+            if (equals == true)
+                Console.WriteLine("订单重复，请重新输入。");
+            else
+            {
+                orders.Add(order);
+                Console.WriteLine("订单添加成功。");
+            }
+        }
+        public void showAll()//显示所有订单
+        {
+            foreach(Order or in orders)
+            {
+                Console.WriteLine(or.GetOrderDetails().ToString());
+                Console.WriteLine();
+            }
+        }
+        /*获取与指定字段有相同值的订单：searchWay=1为按订单号查询，2为按产品号查询，3为按客户查询，4为按订单金额查询*/
+        private List<Order> GetOrders(int searchWay,string Information)
+        {
+            
+            switch (searchWay)
+            {
+                case 1:
+                    var query1 = from or in orders
+                                where or.getOrderNumber() == Information
+                                orderby or.getOrderAmount()
+                                select or;
+                    return query1.ToList();
+                case 2:
+                    var query2 = from or in orders
+                                where or.getProductName() == Information
+                                 orderby or.getOrderAmount()
+                                 select or;
+                    return query2.ToList();
+                case 3:
+                    var query3 = from or in orders
+                                where or.getClient() == Information
+                                 orderby or.getOrderAmount()
+                                 select or;
+                    return query3.ToList();
+                default:
+                    var query4 = from or in orders
+                                where or.getOrderAmount() == Double.Parse(Information)
+                                 orderby or.getOrderAmount()
+                                 select or;
+                    return query4.ToList();
+
+            }
+        }
+        public void searchOrder(int searchWay,string Information)//查询的调用接口，输出查询结果
+        {
+            if (searchWay < 1 || searchWay > 4)
+            {
+                Console.WriteLine("该指令不存在。");
+                return;
+            }
+            List<Order> SearchResults = GetOrders(searchWay, Information);
+            if (SearchResults.Count == 0) {
+                Console.WriteLine("符合要求的订单不存在。");
+            }
+            else
+            {
+                foreach (Order or in SearchResults)
+                {
+                    Console.WriteLine(or.ToString());
+                    Console.WriteLine();
+                }
+
+            }
+        }
+        public void deleteOders(int SearchWay,string Information)//删除订单
+        {
+            bool deleteSuccessful = false;
+            if (SearchWay < 1 || SearchWay > 4)//检查指令是否正确
+            {
+                Console.WriteLine("该指令不存在。");
+                return;
+            }
+            for(int i=0;i<orders.Count;i++)//遍历orders
+            {
+                Order or = orders[i];
+                switch (SearchWay)
+                {
+                    case 1:
+                        if (or.getOrderNumber() == Information)
+                        {
+                            orders.Remove(or);
+                            deleteSuccessful = true;
+                            i--;//如果移除了某一个订单后则指针需要减一
+                        }
+                        break;
+                    case 2:
+                        if (or.getProductName() == Information)
+                        {
+                            orders.Remove(or);
+                            deleteSuccessful = true;
+                            i--;
+                        }
+                        break;
+                    case 3:
+                        if (or.getClient() == Information)
+                        {
+                            orders.Remove(or);
+                            deleteSuccessful = true;
+                            i--;
+                        }
+                        break;
+                    default:
+                        if (or.getOrderAmount() == Double.Parse(Information))
+                        {
+                            orders.Remove(or);
+                            deleteSuccessful = true;
+                            i--;
+                        }
+                        break;
+                }
+            }
+            if (deleteSuccessful == false)
+                Console.WriteLine("该订单不存在。");
+            else
+                Console.WriteLine("订单删除成功。");
+        }
+        public void AddOrder(string oredrNumber,string productNmae,string client,double orderAmount)//添加订单
+        {
+            Order order = new Order(oredrNumber, productNmae, client, orderAmount);
+            foreach(Order or in orders)
+            {
+                if (or.Equals(order))
+                {
+                    Console.WriteLine("有重复的订单，无法添加。");
+                    return;
+                }
+            }
+            orders.Add(order);
+        }
+        /*Information只能是订单号，因为订单号为唯一标识符，后续三个参数依次是订单号，商品名，客户，订单金额，需要修改则填写修改的
+         内容，无需修改则用“%”作为参数，如modificationOrder("11100","%","%","小明","%")是将11100号订单的客户该为“小明”*/
+        public void modificationOrder(string Information, string oredrNumber, string productName, string client, string orderAmount)//修改订单
+        {
+            string orderAmount1 = orderAmount;
+            if (orderAmount == "%")
+                orderAmount = "0";
+            Order order = new Order(oredrNumber, productName, client, Double.Parse(orderAmount));
+            for(int i=0;i<orders.Count;i++)
+            {
+                Order or = orders[i];
+                if (or.getOrderNumber() == Information)
+                {
+                    if (oredrNumber == "%")
+                        order.setOrderNumber(or.getOrderNumber());
+                    if (productName == "%")
+                        order.setProductName(or.getProductName());
+                    if (client == "%")
+                        order.setClient(or.getClient());
+                    if (orderAmount1 == "%")
+                        order.setOrderAmount(or.getOrderAmount());
+                    orders.Remove(or);
+                    if (GetOrders(1, order.getOrderNumber()).Count!=0)
+                    {
+                        Console.WriteLine("修改后订单号出现重复，无法修改。");
+                        orders.Add(or);
+                    }
+                    else
+                    {
+                        orders.Add(order);
+                        Console.WriteLine("修改成功。");
+                    }
+                }
+            }
+
+        }
+        public void sortOrders(int n=0)//排序
+        {
+            if (n == 0)
+                orders.Sort((p1, p2) =>Int32.Parse(p1.getOrderNumber()) - Int32.Parse(p2.getOrderNumber()));
+            else
+                orders.Sort((p1, p2) => Int32.Parse(p2.getOrderNumber()) - Int32.Parse(p1.getOrderNumber()));
+        }
+    }
+}
+
+
+
+
+using System;
+
+namespace HW04
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            OrderService orderService = new OrderService();
+            orderService.AddOrder(new Order("11100", "可乐", "小明", 3));
+            orderService.AddOrder(new Order("11101", "饼干", "小强", 6));
+            orderService.AddOrder(new Order("11102", "薯条", "小红", 8));
+            orderService.AddOrder(new Order("11105", "汉堡", "小芳", 9));
+            orderService.AddOrder(new Order("18044", "饼干", "小晓", 6));
+            //orderService.showAll();
+            orderService.searchOrder(2, "饼干");
+            orderService.searchOrder(1, "111110");
+            orderService.deleteOders(2, "饼干");
+            orderService.deleteOders(2, "饼干");
+            orderService.modificationOrder("11100", "01103", "葡萄", "%", "%");
+            orderService.sortOrders();
+            orderService.showAll();
+
+        }
+    }
+}
+
